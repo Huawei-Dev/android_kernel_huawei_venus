@@ -162,6 +162,8 @@ struct snd_compr_metadata {
  * SNDRV_COMPRESS_SET_NEXT_TRACK_PARAM: send codec specific data for the next
  * track in gapless
  * SNDRV_COMPRESS_IOCTL_VERSION: Query the API version
+ * SNDRV_COMPRESS_SET_NEXT_TRACK_PARAM: send codec specific data for the next
+ * track in gapless
  */
 #define SNDRV_COMPRESS_IOCTL_VERSION	_IOR('C', 0x00, int)
 #define SNDRV_COMPRESS_GET_CAPS		_IOWR('C', 0x10, struct snd_compr_caps)
