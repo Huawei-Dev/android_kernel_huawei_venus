@@ -1048,9 +1048,7 @@ hwcam_cfgstream_vo_get_buf(
     }
     spin_unlock_irqrestore(&stm->lock_bufq, flags);
     if (ret) {
-        bufstatus->id = ret->buf.v4l2_buf.index;
-        bufstatus->tv.tv_sec = ret->buf.v4l2_buf.timestamp.tv_sec;
-        bufstatus->tv.tv_usec = ret->buf.v4l2_buf.timestamp.tv_usec;
+        bufstatus->id = ret->buf.index;
         return 0;
     }
     else {
@@ -1071,7 +1069,7 @@ hwcam_cfgstream_vo_put_buf(
 
     spin_lock_irqsave(&stm->lock_bufq, flags);
     list_for_each_entry_safe(entry, tmp, &stm->bufq_busy, node) {
-        if (entry->buf.v4l2_buf.index == bufstatus->id) {
+        if (entry->buf.index == bufstatus->id) {
             list_move(&entry->node, &stm->bufq_idle);
             rc = 0;
             break;
@@ -1093,7 +1091,7 @@ hwcam_cfgstream_vo_buf_done(
 
     spin_lock_irqsave(&stm->lock_bufq, flags);
     list_for_each_entry_safe(entry, tmp, &stm->bufq_busy, node) {
-        if (entry->buf.v4l2_buf.index == bufstatus->id) {
+        if (entry->buf.index == bufstatus->id) {
             list_del_init(&entry->node);
             if (bufstatus->buf_status == false) {
                 vb2_buffer_done(&entry->buf, VB2_BUF_STATE_DONE);
