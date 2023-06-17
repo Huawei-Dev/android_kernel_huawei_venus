@@ -17,7 +17,6 @@ extern "C" {
 #define RSE_MODEM_NUM       2
 #define PASTAR_NUM   2
 
-
 /*****************************************************************************
  结构名    : nv_protocol_base_type
  结构说明  : nv_protocol_base_type结构 ID= en_NV_Item_Modem_Log_Path 148
