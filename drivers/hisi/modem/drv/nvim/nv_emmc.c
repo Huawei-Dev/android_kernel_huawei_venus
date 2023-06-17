@@ -885,8 +885,7 @@ u32 nv_emmc_access(const s8* path,s32 mode)
     {
         return NV_ERROR;
     }
-	/* coverity[self_assign] */
-    mode = mode;
+
     switch(fd->emmc_type)
     {
         case NV_FILE_DLOAD:
