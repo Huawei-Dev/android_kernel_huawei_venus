@@ -1911,7 +1911,7 @@ static ssize_t hw_lcd_check_reg_show(struct platform_device* pdev, char* buf)
 	}
 	mipi_dsi0_base = hisifd->mipi_dsi0_base;
 
-	HISI_FB_DEBUG("fb%d, +.\n", hisifd->index);
+	HISI_FB_DEBUG("fb%d, +.\n", hisifd->index);
 
 	lcd_check_reg[0].dtype = lcd_info.read_data_type;
 

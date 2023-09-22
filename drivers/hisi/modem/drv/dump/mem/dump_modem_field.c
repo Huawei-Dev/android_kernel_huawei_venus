@@ -523,7 +523,7 @@ void modem_dump_field_register(void)
 *****************************************************************************/
 s32 bsp_dump_mem_init(void)
 {
-    if(g_dump_mem_init == 1)
+    if(g_dump_mem_init == 1)
     {
         return BSP_OK;
     }

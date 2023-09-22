@@ -599,7 +599,7 @@ config MMC_DW_HI6XXX
 	  for platforms based on Kirin 6 serial SoC's.
 
 config MMC_DW_EMMC_USED_AS_MODEM
-	tristate "Hisilicon eMMC used as third_party modem for Synopsys DW Memory Card Interface""
+	tristate "Hisilicon eMMC used as third_party modem for Synopsys DW Memory Card Interface"
 	depends on MMC_DW && MMC_DW_HI3XXX
 	default n
 	help

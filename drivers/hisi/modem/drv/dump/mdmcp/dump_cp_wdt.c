@@ -140,6 +140,6 @@ int bsp_wdt_register_hook(WDT_CORE_ID core_id, void *func)
     }
     g_wdt_reboot_func = func;
     return BSP_OK;
-}
+}
 
 
