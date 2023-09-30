@@ -2779,10 +2779,11 @@ void inputhub_process_sensor_report(const pkt_header_t* head)
 
         if ((sensor_event->data_flag & FLUSH_END) || flush_flag == 1)
         {
-            return report_sensor_event_batch(TAG_FLUSH_META,
+            report_sensor_event_batch(TAG_FLUSH_META,
                                              (int*)head,
                                              sizeof(pkt_header_t),
                                              0);
+		return;
         }
 }
 
