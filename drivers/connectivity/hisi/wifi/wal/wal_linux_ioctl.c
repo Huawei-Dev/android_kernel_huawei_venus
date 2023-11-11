@@ -2309,7 +2309,7 @@ OAL_STATIC oal_int32 hwifi_config_host_global_ini_param(oal_void)
         pst_cfg_hmac_vap = (hmac_vap_stru *)mac_res_get_hmac_vap(0);
         if (OAL_PTR_NULL == pst_cfg_hmac_vap)
         {
-            OAM_WARNING_LOG0(0, OAM_SF_ANY, "{hwifi_config_host_global_ini_param::pst_cfg_hmac_vap is null。}\r\n");
+            OAM_WARNING_LOG0(0, OAM_SF_ANY, "{hwifi_config_host_global_ini_param::pst_cfg_hmac_vap is null}\r\n");
             return -OAL_EFAUL;
         }
 
@@ -3200,7 +3200,7 @@ OAL_STATIC oal_void hwifi_config_init_ini_main(oal_net_device_stru *pst_cfg_net_
     修改内容   : 新生成函数
 
 *****************************************************************************/
-oal_bool_enum hwifi_config_init_nvram_main(oal_net_device_stru *pst_cfg_net_dev)
+oal_int32 hwifi_config_init_nvram_main(oal_net_device_stru *pst_cfg_net_dev)
 {
     /* nvram 参数结构体 */
     struct nvram_params_stru
