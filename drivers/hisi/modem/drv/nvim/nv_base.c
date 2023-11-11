@@ -1,6 +1,3 @@
-
-
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -33,8 +30,6 @@
 #include "bsp_dump.h"
 #include "nv_msg.h"
 #include "nv_proc.h"
-
-
 
 u32 nv_readEx(u32 modem_id,u32 itemid,u32 offset,u8* pdata,u32 datalen)
 {
@@ -202,8 +197,6 @@ nv_writeEx_err:
     return ret;
 }
 
-
-
 u32 bsp_nvm_get_nv_num(void)
 {
     struct nv_ctrl_file_info_stru* ctrl_info = (struct nv_ctrl_file_info_stru*)NV_GLOBAL_CTRL_INFO_ADDR;
@@ -262,8 +255,6 @@ u32 bsp_nvm_authgetlen(u32 itemid,u32* len)
 {
     return bsp_nvm_get_len(itemid,len);
 }
-
-
 
 u32 bsp_nvm_dcread_direct(u32 modem_id,u32 itemid, u8* pdata,u32 datalen)
 {
@@ -327,8 +318,6 @@ u32 bsp_nvm_dcwrite_direct(u32 modem_id,u32 itemid, u8* pdata,u32 datalen)
     return nv_writeEx(modem_id,itemid,0,pdata,datalen);
 }
 
-
-
 u32 bsp_nvm_flush(void)
 {
     u32 ret;
@@ -369,11 +358,9 @@ u32 bsp_nvm_flushSys(void)
         goto nv_flush_err;
     }
     ulTotalLen = ddr_info->file_len;
-    /*在nvdload分区文件末尾置标志0xabcd8765*/
     *( unsigned int* )( NV_GLOBAL_CTRL_INFO_ADDR + ddr_info->file_len )
         = ( unsigned int )NV_FILE_TAIL_MAGIC_NUM;
     ulTotalLen += sizeof(unsigned int);
-    /*系统分区数据不做CRC校验，因此回写时不考虑CRC校验码的存放位置*/
     ret = (u32)nv_file_write((u8*)NV_GLOBAL_CTRL_INFO_ADDR,1,ulTotalLen,fp);
     nv_file_close(fp);
     if(ret != ulTotalLen)
@@ -399,15 +386,6 @@ nv_flush_err:
 * Parameter  : none
 * Output     : result
 * History    : yuyangyang  00228784  create
-* 备注       : 由于备份内存nv到备份区的过程中，需要保证内存中的NV数据不被改写，备份过程中需要锁住内存，
-*              那么对该接口的使用，要有场景上的限制，目前使用场景包括:
-*              1. 提供给用户接口mdrv_nv_backup使用，目前没人使用；
-*              2. bsp_nvm_update_default，产线专用接口，用于at命令^inforbu，不会有并发写操作；
-*              3. nv_file_flag_check，启动过程中检查写入完成性的操作，不会有并发写操作；
-*              4. nv_data_writeback, 升级完成之后，讲升级后的数据写回备份区，不会有并发写操作；
-*                                    启动加载过程中，从img分区和备份分区都加载失败，需要从出厂区做紧急恢复，
-*                                    恢复完成后写回备份区，不会有并发写操作。
-*               从现有场景看，bsp_nvm_backup接口过程中锁内存不会产生风险，维护时需要持续关注。
 */
 u32 bsp_nvm_backup(u32 crc_flag)
 {
@@ -458,8 +436,6 @@ u32 bsp_nvm_backup(u32 crc_flag)
         }
     }
 
-    /* 如果需要进行CRC校验, 备份数据到备份区，内存中的数据较备份区更新，所以crc check不能带自动恢复,
-       要保证写入备份区的数据，crc校验正确，同时备份过程中内存数据不被改写，所以需要锁住内存 */
     nv_ipc_sem_take(IPC_SEM_NV_CRC, IPC_SME_TIME_OUT);
     ret = (u32)nv_file_write((u8*)NV_GLOBAL_CTRL_INFO_ADDR,1,writeLen,fp);
     nv_ipc_sem_give(IPC_SEM_NV_CRC);
@@ -493,16 +469,12 @@ nv_backup_fail:
 
 }
 
-
 /*
 * Function   : bsp_nvm_update_default
 * Discription: update mem data to default section
 * Parameter  : none
 * Output     : result
 * History    : yuyangyang  00228784  create
-* 备注       : 产线专用接口，用于at命令^inforbu，此时要保证没有其他写NV的动作，
-*              备份出厂分区的过程中会锁住NV内存不让写，
-*              如果此时有写NV动作，可能会导致获取内存写权限时间超长，引起未知的程序错误
 */
 u32 bsp_nvm_update_default(void)
 {
@@ -551,7 +523,6 @@ u32 bsp_nvm_update_default(void)
         return NV_ERROR;
     }
     
-    /*在写入文件前进行CRC校验，以防数据不正确*/
     ret = nv_crc_check_ddr(NV_RESUME_NO);
     if(ret)
     {
@@ -575,8 +546,6 @@ u32 bsp_nvm_update_default(void)
         goto nv_update_default_err;
     }
 
-    /* 锁住NV内存，在写入文件前进行CRC校验，以防数据不正确，
-       同时要保证当前的crc check不做自动恢复，带自动恢复的crc check会在恢复过程中获取ipc semaphore，导致死锁*/
     ret = nv_ipc_sem_take(IPC_SEM_NV_CRC, IPC_SME_TIME_OUT);
     if(ret)
     {
@@ -636,7 +605,6 @@ u32 bsp_nvm_revert_default(void)
 {
     u32 ret;
 
-    /* 先把出厂区所有NV项恢复回来 */
     ret = nv_revert_data((s8*)NV_DEFAULT_PATH, NULL, 0, NV_FLAG_NEED_CRC);
     if(ret)
     {
@@ -644,7 +612,6 @@ u32 bsp_nvm_revert_default(void)
         return ret;
     }
 
-    /*机要nv项不恢复,重新恢复成img分区里的数据，需要重新生成CRC校验码*/
     ret = nv_revert_data(NV_IMG_PATH,g_ausNvResumeSecureIdList,\
         (u32)bsp_nvm_getRevertNum((unsigned long)NV_SECURE_ITEM), NV_FLAG_NEED_CRC);
     if(ret)
@@ -690,17 +657,12 @@ void bsp_nvm_icc_task(void* parm)
     nv_cmd_req *msg;
     nv_item_info_t *nv_info;
 	
-    /* coverity[self_assign] */
-    parm = parm;
-
-    /* coverity[no_escape] */
     for(;;)
     {
         osl_sem_down(&g_nv_ctrl.task_sem);
 
         g_nv_ctrl.opState = NV_OPS_STATE;
 
-        /*如果当前处于睡眠状态，则等待唤醒处理*/
         if(g_nv_ctrl.pmState == NV_SLEEP_STATE)
         {
             printk("%s cur state in sleeping,wait for resume end!\n",__func__);
@@ -787,7 +749,6 @@ u32 bsp_nvm_xml_decode(void)
         }
     }
 
-    /*CUST XML 无对应MAP文件，传入空值即可*/
     if(!nv_file_access(NV_CUST_CARD1_PATH,0))
     {
         ret = nv_xml_decode(NV_CUST_CARD1_PATH,NULL,NV_USIMM_CARD_1);
@@ -827,7 +788,6 @@ u32 bsp_nvm_upgrade(void)
     nv_debug(NV_FUN_UPGRADE_PROC,0,0,0,0);
     nv_mntn_record("Balong nv upgrade start!\n");
 
-    /*判断fastboot阶段xml 解析是否异常，若出现异常，则需要重新解析xml*/
     if(ddr_info->xml_dec_state != NV_XML_DEC_SUCC_STATE)
     {
         nv_mntn_record("fastboot xml decode fail ,need kernel decode again!\n");
@@ -840,8 +800,6 @@ u32 bsp_nvm_upgrade(void)
         }
     }
 
-
-    /*升级恢复处理，烧片版本直接返回ok*/
     ret = nv_upgrade_revert_proc();
     if(ret)
     {
@@ -857,7 +815,6 @@ u32 bsp_nvm_upgrade(void)
     (void)nv_crc_make_ddr();
     nv_mntn_record("upgrade mkddr crc success!\n");
 
-    /*将最新数据写入各个分区*/
     ret = nv_data_writeback();
     if(ret)
     {
@@ -870,7 +827,6 @@ u32 bsp_nvm_upgrade(void)
         nv_mntn_record("upgrade writeback success!\n");
     }
 
-    /*置升级包无效*/
     ret = (u32)nv_modify_upgrade_flag((bool)false);
     if(ret)
     {
@@ -900,8 +856,6 @@ upgrade_fail_out:
 * Parameter  : none
 * Output     : result
 * History    : yuyangyang  00228784  create
-* 备注       : reload在初始化过程中，需要从流程上保证此时不会有写NV的操作，
-               从而做crc check的时候内存不会被改写。
 */
 u32 bsp_nvm_resume_bakup(void)
 {
@@ -934,7 +888,6 @@ u32 bsp_nvm_resume_bakup(void)
             goto load_err_proc;
         }
 
-        /*从备份区加载需要首先写入工作区*/
         ret = nv_img_flush_all();
         if(ret)
         {
@@ -964,8 +917,6 @@ load_err_proc:
 * Parameter  : none
 * Output     : result
 * History    : yuyangyang  00228784  create
-* 备注       : reload在初始化过程中，需要从流程上保证此时不会有写NV的操作，
-               从而做crc check的时候内存不会被改写。
 */
 u32 bsp_nvm_reload(void)
 {
@@ -973,7 +924,6 @@ u32 bsp_nvm_reload(void)
     FILE* fp = NULL;
     u32 datalen = 0;
 
-    /*工作分区数据存在，且无未写入完成的标志文件*/
     if( true == nv_check_file_validity((s8 *)NV_IMG_PATH, (s8 *)NV_IMG_FLAG_PATH))
     {
         nv_mntn_record("load from %s current slice:0x%x\n",NV_IMG_PATH, bsp_get_slice_value());
@@ -992,8 +942,6 @@ u32 bsp_nvm_reload(void)
             goto load_bak;
         }
 
-        /*reload在初始化过程中，需要从流程上保证此时不会有写NV的操作，从而做crc check的时候内存不会被改写
-          带自动恢复的crc check，会在恢复过程中获取crc ipc semaphore，所以不能锁住内存做crc check*/
         ret = nv_crc_check_ddr(NV_RESUME_BAKUP);
         if(BSP_ERR_NV_CRC_RESUME_SUCC == ret)
         {
@@ -1009,7 +957,6 @@ u32 bsp_nvm_reload(void)
         {
             nv_mntn_record("nv image check crc failed %d...current slice:0x%x\n", ret, bsp_get_slice_value());
 
-            /* 保存错误镜像，然后从bakup分区恢复 */
             (void)nv_debug_store_file(NV_IMG_PATH);
             if(nv_debug_is_resume_bakup())
             {
@@ -1024,7 +971,6 @@ u32 bsp_nvm_reload(void)
                 nv_mntn_record("config don't resume bakup...slice:0x%x \n",bsp_get_slice_value());
             }
 
-            /* 复位系统 */
             if(nv_debug_is_reset())
             {
                 system_error(DRV_ERRNO_NV_CRC_ERR, NV_FUN_MEM_INIT, 3, NULL, 0);
@@ -1038,13 +984,7 @@ load_bak:
 
     return bsp_nvm_resume_bakup();
 }
-/*****************************************************************************
- 函 数 名  : bsp_nvm_write_buf_init
- 功能描述  : 初始化写入NV时使用的buf和信号量
- 输入参数  :
- 输出参数  : 无
- 返 回 值  : 无
-*****************************************************************************/
+
 u32 bsp_nvm_buf_init(void)
 {
     /*create sem*/
@@ -1106,10 +1046,7 @@ s32 bsp_nvm_kernel_init(void)
         goto out;
     }
 
-    if((ddr_info->mem_file_type == NV_MEM_DLOAD) &&
-       (!nv_file_access((s8*)NV_DLOAD_PATH,0)) &&/*升级分区存在数据*/
-       (true == nv_get_upgrade_flag())/*升级文件有效*/
-       )
+    if((ddr_info->mem_file_type == NV_MEM_DLOAD) && (!nv_file_access((s8*)NV_DLOAD_PATH,0)) && (true == nv_get_upgrade_flag()))
     {
         ret = bsp_nvm_upgrade();
         if(ret)
@@ -1123,7 +1060,6 @@ s32 bsp_nvm_kernel_init(void)
             nv_mntn_record("upgrade success!\n");
         }
 
-        /*读取NV自管理配置*/
         ret = bsp_nvm_read(NV_ID_DRV_SELF_CTRL,(u8*)(&(g_nv_ctrl.nv_self_ctrl)),(u32)sizeof(NV_SELF_CTRL_STRU));
         if(ret)
         {
@@ -1133,7 +1069,6 @@ s32 bsp_nvm_kernel_init(void)
     }
     else
     {
-        /*读取NV自管理配置*/
         ret = bsp_nvm_read(NV_ID_DRV_SELF_CTRL,(u8*)(&(g_nv_ctrl.nv_self_ctrl)), (u32)sizeof(NV_SELF_CTRL_STRU));
         if(ret)
         {
@@ -1141,7 +1076,6 @@ s32 bsp_nvm_kernel_init(void)
             nv_printf("read 0x%x fail,use default value! ret :0x%x\n",NV_ID_DRV_SELF_CTRL,ret);
         }
 
-        /*重新加载最新数据*/
         ret = bsp_nvm_reload();
         if(ret)
         {
@@ -1154,7 +1088,6 @@ s32 bsp_nvm_kernel_init(void)
         }
     }
 
-    /*初始化双核使用的链表*/
     nv_flushListInit();
 
     ret = bsp_nvm_buf_init();
@@ -1164,11 +1097,9 @@ s32 bsp_nvm_kernel_init(void)
         goto out;
     }
 
-    /*置初始化状态为OK*/
     ddr_info->acore_init_state = NV_INIT_OK;
     nv_flush_cache((void*)NV_GLOBAL_INFO_ADDR, (u32)NV_GLOBAL_INFO_SIZE);
 
-    /*保证各分区数据正常写入*/
     nv_file_flag_check();
 
     INIT_LIST_HEAD(&g_nv_ctrl.stList);
@@ -1217,13 +1148,8 @@ static void bsp_nvm_exit(void)
 {
     struct nv_global_ddr_info_stru* ddr_info = (struct nv_global_ddr_info_stru*)NV_GLOBAL_INFO_ADDR;
 
-    /* coverity[self_assign] */
-    ddr_info = ddr_info;
-
-    /*关机写数据*/
     (void)bsp_nvm_flush();
-    /*清除标志*/
-    /* coverity[secure_coding] */
+
     memset(ddr_info,0,sizeof(struct nv_global_ddr_info_stru));
 }
 
@@ -1233,7 +1159,6 @@ void modem_nv_delay(void)
     char *blk_label;
     int i, ret = -1;
 
-    /*最长等待时长10s*/
     for(i=0;i<10;i++)
     {
         nv_printf("modem nv wait for nv block device %d s\n",i);
@@ -1273,7 +1198,6 @@ void modem_nv_delay(void)
     }
 }
 
-/*lint -save -e715*//*715表示入参dev未使用*/
 static int  modem_nv_probe(struct platform_device *dev)
 {
     int ret;
@@ -1307,10 +1231,7 @@ static void modem_nv_shutdown(struct platform_device *dev)
     ddr_info->ccore_init_state = NV_SHUTDOWN_STATE;
     ddr_info->mcore_init_state = NV_SHUTDOWN_STATE;
 }
-/*lint -restore*/
 
-/*lint -save -e785*//*785表示对结构体初始化的不完全modem_nv_pm_ops和modem_nv_drv modem_nv_device*/
-/*lint -save -e715*//*715表示入参dev未使用*/
 static s32 modem_nv_suspend(struct device *dev)
 {
     static int count = 0;
@@ -1380,7 +1301,7 @@ int  modem_nv_init(void)
 
     return ret;
 }
-/*仅用于初始化nv设备*/
+
 int nv_init_dev(void)
 {
     u32 ret;
@@ -1434,8 +1355,3 @@ EXPORT_SYMBOL(bsp_nvm_dcwritepart);
 EXPORT_SYMBOL(bsp_nvm_get_nvidlist);
 EXPORT_SYMBOL(bsp_nvm_authgetlen);
 EXPORT_SYMBOL(bsp_nvm_xml_decode);
-
-
-
-
-
