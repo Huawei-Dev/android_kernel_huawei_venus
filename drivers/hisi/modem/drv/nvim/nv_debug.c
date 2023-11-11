@@ -625,7 +625,7 @@ void nv_show_ref_info(u32 arg1,u32 arg2)
 
     for(i = _min;i<_max;i++)
     {
-        printf("µÚ%dÏî :\n",i);
+        printf("i%d :\n",i);
         printf("nvid   :0x%-8x, file id : 0x%-8x\n",ref_info->itemid,ref_info->file_id);
         printf("nvlen  :0x%-8x, nv_off  : 0x%-8x, nv_pri 0x%-8x\n",ref_info->nv_len,ref_info->nv_off,ref_info->priority);
         printf("dsda   :0x%-8x\n",ref_info->modem_num);
