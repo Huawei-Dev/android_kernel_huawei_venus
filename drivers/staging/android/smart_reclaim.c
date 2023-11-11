@@ -71,7 +71,7 @@ static bool is_soft_vma(struct vm_area_struct *vma) {
 		*/
 		goto out;
 	}
-	path = vma->vm_file->f_path.dentry->d_name.name;
+	path = vma->vm_file->f_path.dentry->d_name.name; /*lint !e64*/
 	//see the path is soft_reclaim
 	suffix = get_path_ext(path);
 	if (suffix != NULL && strstr(soft_reclaim, suffix)) {
