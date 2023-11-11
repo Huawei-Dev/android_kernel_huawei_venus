@@ -1361,10 +1361,10 @@ static int mmi_hybrid_raw_cap_test(void)
 	result = synaptics_rmi4_f54_attention();
 	if (result < 0) {
 		TS_LOG_ERR("Failed to get data\n");
-		return;
+		return -1;
 	}
 	TS_LOG_INFO("hybrid_raw_cap_report_size = %d.\n", f54->report_size);
-	return;
+	return result;
 }
 
 static int mmi_hybrid_abs_delta_test(void)
@@ -1380,12 +1380,12 @@ static int mmi_hybrid_abs_delta_test(void)
 	if (result < 0) {
 		TS_LOG_ERR("Failed to get data\n");
 		strncat(buf_f54test_result, "-6F", MAX_STR_LEN);
-		return;
+		return -1;
 	}
 	TS_LOG_INFO("hybrid_abs_delta_report_size = %d.\n", f54->report_size);
 	mmi_hybrid_abs_delta = f54->report_size;
 	strncat(buf_f54test_result, "-6P", MAX_STR_LEN);
-	return;
+	return result;
 }
 
 static int mmi_trex_shorts_test(void)
@@ -1401,11 +1401,11 @@ static int mmi_trex_shorts_test(void)
 	if (result < 0) {
 		TS_LOG_ERR("Failed to get data\n");
 		strncat(buf_f54test_result, "-4F", MAX_STR_LEN);
-		return;
+		return -1;
 	}
 	TS_LOG_INFO("trex_shorts_report_size = %d.\n", f54->report_size);
 	strncat(buf_f54test_result, "-4P", MAX_STR_LEN);
-	return;
+	return result;
 }
 
 static int mmi_trex_highresistance_test(void)
@@ -1421,11 +1421,11 @@ static int mmi_trex_highresistance_test(void)
 	if (result < 0) {
 		TS_LOG_ERR("Failed to get data\n");
 		strncat(buf_f54test_result, "-8F", MAX_STR_LEN);
-		return;
+		return -1;
 	}
 	TS_LOG_INFO("trex_highresistance_report_size = %d.\n", f54->report_size);
 	strncat(buf_f54test_result, "-8P", MAX_STR_LEN);
-	return;
+	return result;
 }
 
 static int f54_delta_rx_report(void)
