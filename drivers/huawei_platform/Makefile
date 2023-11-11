@@ -27,3 +27,4 @@ obj-$(CONFIG_ANTENNA_BOARDID_GPIO_DETECT) += antenna_board_gpio_match/
 obj-$(CONFIG_HUAWEI_OCP) += ocp/
 obj-$(CONFIG_MADAPT) += madapt/
 obj-$(CONFIG_LCD_ON_OFF_CHECK) += lcd_on_off_check/
+obj-$(CONFIG_HUAWEI_EMCOM) += emcom/
