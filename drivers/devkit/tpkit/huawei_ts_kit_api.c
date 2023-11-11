@@ -543,7 +543,7 @@ int ts_kit_power_control_notify(enum ts_pm_type pm_type, int timeout)
     if (TS_UNINIT == atomic_read(&g_ts_kit_platform_data.state))
     {
         TS_LOG_INFO("ts is not init");
-        return;
+        return -1;
     }
 #if defined (CONFIG_TEE_TUI)
     if (g_ts_kit_platform_data.chip_data->report_tui_enable && TS_BEFORE_SUSPEND == pm_type) {
