@@ -42,6 +42,10 @@
 
 #define NETLINK_INET_DIAG	NETLINK_SOCK_DIAG
 
+#ifdef CONFIG_HUAWEI_EMCOM
+#define NETLINK_EMCOM 35
+#endif
+
 #define MAX_LINKS 33
 
 struct sockaddr_nl {
