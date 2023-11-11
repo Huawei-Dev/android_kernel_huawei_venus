@@ -601,7 +601,7 @@ VOS_VOID DIAG_ShowLayerCfg(VOS_UINT32 ulModuleId, VOS_UINT32 ulSrcDst)
             return ;
         }
 
-        diag_printf("PID %d mod %s .\n", ulModuleId, ulState ? "´ò¿ª×´Ì¬":"¹Ø±Õ×´Ì¬");
+        diag_printf("PID %d mod %s .\n", ulModuleId, ulState ? "Module":"State");
     }
     else
     {
@@ -632,7 +632,7 @@ VOS_VOID DIAG_ShowLayerCfg(VOS_UINT32 ulModuleId, VOS_UINT32 ulSrcDst)
             return ;
         }
 
-        diag_printf("PID %d state %s .\n", ulModuleId, ulState ? "OK");
+        diag_printf("PID %d state %s .\n", ulModuleId, ulState ? "Module":"State");
     }
 
     diag_printf("PID %d.\n", g_astCBTInfoTbl[EN_DIAG_CBT_API_TRACE_ERR].ulCalledNum);
