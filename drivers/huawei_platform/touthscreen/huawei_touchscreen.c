@@ -6340,7 +6340,7 @@ out:
 		kfree(info);
 	TS_LOG_INFO("%s done\n", __FUNCTION__);
 
-	return error;
+	return;
 }
 
 static int ts_init(void)
