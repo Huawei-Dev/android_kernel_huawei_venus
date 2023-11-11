@@ -595,7 +595,7 @@ int ap_hall_report(int value)
 bool ap_sensor_enable(int tag, bool enable)
 {
 	if (tag >= TAG_SENSOR_END)
-		return;
+		return false;
 
 	bool work_on_ap = all_ap_sensor_operations[tag].work_on_ap;
 
@@ -2724,19 +2724,19 @@ void inputhub_process_sensor_report(const pkt_header_t* head)
         {
             hwlog_info("%s not report accel_data for dt\n",
                        __func__);
-            return 0;
+            return;
         }
 
         if (unlikely((stop_auto_als) && (head->tag == TAG_ALS)))
         {
             hwlog_info("%s not report als_data for dt\n", __func__);
-            return 0;
+            return;
         }
 
         if (unlikely((stop_auto_ps) && (head->tag == TAG_PS)))
         {
             hwlog_info("%s not report ps_data for dt\n", __func__);
-            return 0;
+            return;
         }
 
         if (head->tag == TAG_PRESSURE)
