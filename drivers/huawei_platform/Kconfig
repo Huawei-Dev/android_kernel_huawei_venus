@@ -31,6 +31,7 @@ source "drivers/huawei_platform/antenna_board_gpio_match/Kconfig"
 source "drivers/huawei_platform/ocp/Kconfig"
 source "drivers/huawei_platform/madapt/Kconfig"
 source "drivers/huawei_platform/lcd_on_off_check/Kconfig"
+source "drivers/huawei_platform/emcom/Kconfig"
 endif #HUAWEI_PLATFORM
 
 endmenu
