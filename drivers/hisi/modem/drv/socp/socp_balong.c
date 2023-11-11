@@ -3701,7 +3701,7 @@ u32 socp_show_enc_src_chan_add(u32 u32UniqueId)
            (s32)sSocpAddDebugEncSrc->u32SocpFreeEncSrcCnt[u32RealChanID]);
     socp_printf("socp                           : 0x%x\n",
            (s32)sSocpAddDebugEncSrc->u32SocpStartEncSrcCnt[u32RealChanID]);
-    socp_printf("socp停止编码源通道成功的次数                           : 0x%x\n",
+    socp_printf("socp                          : 0x%x\n",
            (s32)sSocpAddDebugEncSrc->u32SocpStopEncSrcCnt[u32RealChanID]);
     socp_printf("socp                         : 0x%x\n",
            (s32)sSocpAddDebugEncSrc->u32SocpSoftResetEncSrcCnt[u32RealChanID]);
