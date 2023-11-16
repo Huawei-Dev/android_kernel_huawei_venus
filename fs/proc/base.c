@@ -958,6 +958,79 @@ static const struct file_operations proc_mem_operations = {
 	.release	= mem_release,
 };
 
+#ifdef CONFIG_HW_VIP_THREAD
+static int proc_static_vip_show(struct seq_file *m, void *v)
+{
+	struct inode *inode = m->private;
+	struct task_struct *p;
+	p = get_proc_task(inode);
+	if (!p) {
+		return -ESRCH;
+	}
+	task_lock(p);
+	seq_printf(m, "%d\n", p->static_vip);
+	task_unlock(p);
+	put_task_struct(p);
+	return 0;
+}
+
+static int proc_static_vip_open(struct inode* inode, struct file *filp)
+{
+	return single_open(filp, proc_static_vip_show, inode);
+}
+
+static ssize_t proc_static_vip_write(struct file *file, const char __user *buf,
+			     size_t count, loff_t *ppos)
+{
+	struct task_struct *task;
+	char buffer[PROC_NUMBUF] = {0};
+	const size_t max_len = sizeof(buffer) - 1;
+	int err, static_vip;
+	memset(buffer, 0, sizeof(buffer));
+	if (copy_from_user(buffer, buf, count > max_len ? max_len : count)) {
+		return -EFAULT;
+	}
+	err = kstrtoint(strstrip(buffer), 0, &static_vip);
+	if(err) {
+		return err;
+	}
+	task = get_proc_task(file_inode(file));
+	if (!task) {
+		return -ESRCH;
+	}
+	task->static_vip = static_vip != 0 ? 1 : 0;
+
+	put_task_struct(task);
+	return count;
+}
+
+static ssize_t proc_static_vip_read(struct file* file, char __user *buf,
+							    size_t count, loff_t *ppos)
+{
+	char buffer[PROC_NUMBUF];
+	struct task_struct *task = NULL;
+	int static_vip = -1;
+	size_t len = 0;
+	task = get_proc_task(file_inode(file));
+	if (!task) {
+		return -ESRCH;
+	}
+	static_vip = task->static_vip;
+	put_task_struct(task);
+	len = snprintf(buffer, sizeof(buffer), "%d\n", static_vip);
+	return simple_read_from_buffer(buf, count, ppos, buffer, len);
+}
+
+static const struct file_operations proc_static_vip_operations = {
+	.open       = proc_static_vip_open,
+	.write      = proc_static_vip_write,
+	.read       = proc_static_vip_read,
+	.llseek     = seq_lseek,
+	.release    = single_release,
+};
+
+#endif
+
 static int environ_open(struct inode *inode, struct file *file)
 {
 	return __mem_open(inode, file, PTRACE_MODE_READ);
@@ -3358,6 +3431,9 @@ static const struct pid_entry tid_base_stuff[] = {
 #endif
 #ifdef CONFIG_CPU_FREQ_TIMES
 	ONE("time_in_state", 0444, proc_time_in_state_show),
+#endif
+#ifdef CONFIG_HW_VIP_THREAD
+	REG("static_vip", S_IRUGO, proc_static_vip_operations),
 #endif
 };
 

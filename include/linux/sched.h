@@ -142,6 +142,10 @@ struct blk_plug;
 struct filename;
 struct nameidata;
 
+#ifdef CONFIG_HW_CGROUP_PIDS
+struct group_pids;
+#endif
+
 #define VMACACHE_BITS 2
 #define VMACACHE_SIZE (1U << VMACACHE_BITS)
 #define VMACACHE_MASK (VMACACHE_SIZE - 1)
@@ -346,6 +350,21 @@ extern char ___assert_task_state[1 - 2*!!(
 
 /* Task command name length */
 #define TASK_COMM_LEN 16
+
+#ifdef CONFIG_HW_VIP_THREAD
+enum DYNAMIC_VIP_TYPE
+{
+	DYNAMIC_VIP_BINDER = 0,
+	DYNAMIC_VIP_RWSEM,
+	DYNAMIC_VIP_MUTEX,
+	DYNAMIC_VIP_SEM,
+	DYNAMIC_VIP_FUTEX,
+	DYNAMIC_VIP_MAX,
+};
+
+#define VIP_MSG_LEN 64
+#define VIP_DEPTH_MAX 2
+#endif
 
 extern const char *sched_window_reset_reasons[];
 
@@ -1650,6 +1669,15 @@ struct task_struct {
 	unsigned int flags;	/* per process flags, defined below */
 	unsigned int ptrace;
 
+#ifdef CONFIG_HW_VIP_THREAD
+	int static_vip;
+	atomic64_t dynamic_vip;
+	struct list_head vip_entry;
+	int vip_depth;
+	u64 enqueue_time;
+	u64 dynamic_vip_start;
+#endif
+
 #ifdef CONFIG_SMP
 	struct llist_node wake_entry;
 	int on_cpu;
@@ -1970,6 +1998,10 @@ struct task_struct {
 	struct css_set __rcu *cgroups;
 	/* cg_list protected by css_set_lock and tsk->alloc_lock */
 	struct list_head cg_list;
+#endif
+#ifdef CONFIG_HW_CGROUP_PIDS
+        struct list_head group_pids_list;
+        struct group_pids *group_pids;
 #endif
 #ifdef CONFIG_FUTEX
 	struct robust_list_head __user *robust_list;

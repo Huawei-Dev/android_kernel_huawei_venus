@@ -107,8 +107,13 @@ obj-$(CONFIG_JUMP_LABEL) += jump_label.o
 obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
 obj-$(CONFIG_TORTURE_TEST) += torture.o
 obj-$(CONFIG_MEMBARRIER) += membarrier.o
+obj-$(CONFIG_HW_CGROUP_PIDS) += cgroup_huawei/
 
 obj-$(CONFIG_HAS_IOMEM) += memremap.o
+obj-$(CONFIG_HW_VIP_THREAD) += hwcfs/
+obj-$(CONFIG_HW_VIP_THREAD) += cpu_netlink/
+obj-$(CONFIG_HW_CPULOAD_NOTI) += cpu_netlink/
+obj-$(CONFIG_HW_IAWARE_THREAD_BOOST) += cpu_netlink/
 
 $(obj)/configs.o: $(obj)/config_data.h
 

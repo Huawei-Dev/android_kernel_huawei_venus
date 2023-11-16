@@ -71,6 +71,10 @@
 #include <trace/events/sched.h>
 #include "walt.h"
 
+#ifdef CONFIG_HW_VIP_THREAD
+#include <chipset_common/hwcfs/hwcfs_common.h>
+#endif
+
 static atomic_t __su_instances;
 
 int su_instances(void)
@@ -3231,7 +3235,9 @@ void scheduler_tick(void)
 	trigger_load_balance(rq);
 #endif
 	rq_last_tick_reset(rq);
-
+#ifdef CONFIG_HW_VIP_THREAD
+	trigger_vip_balance(rq);
+#endif
 	rcu_read_lock();
 	grp = task_related_thread_group(curr);
 	if (update_preferred_cluster(grp, curr, old_load))
@@ -3570,6 +3576,10 @@ static void __sched notrace __schedule(bool preempt)
 
 	if (task_on_rq_queued(prev))
 		update_rq_clock(rq);
+
+#ifdef CONFIG_HW_VIP_THREAD
+	prev->enqueue_time = rq->clock;
+#endif
 
 	next = pick_next_task(rq, prev);
 	clear_tsk_need_resched(prev);
@@ -8464,6 +8474,9 @@ void __init sched_init(void)
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
 		init_dl_rq(&rq->dl);
+#ifdef CONFIG_HW_VIP_THREAD
+		vip_init_rq_data(rq);
+#endif
 #ifdef CONFIG_FAIR_GROUP_SCHED
 		root_task_group.shares = ROOT_TASK_GROUP_LOAD;
 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
