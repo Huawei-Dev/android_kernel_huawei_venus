@@ -22,7 +22,7 @@
 #include <governor.h>
 
 #define DEFAULT_GO_HISPEED_LOAD		90
-#define DEFAULT_HISPEED_FREQ		533000000
+#define DEFAULT_HISPEED_FREQ		680000000
 #define DEFAULT_VSYNC_EQULALIZE		45
 #define DEFAULT_LOADING_WINDOW		10
 #define TARGET_LOAD			85
@@ -34,7 +34,6 @@
 #define SURPORT_NTARGET_LOAD_MAX	40
 #define POLICY_BUF_MAX			1024
 #define POLICY_ID_BUF_MAX		10
-
 
 enum {
 	INDEX,
@@ -61,7 +60,6 @@ struct scene_aware_policy {
 	unsigned int ndelay_time;
 	struct list_head node;
 };
-
 
 struct devfreq_gpu_scene_aware_data {
 	unsigned long buffer[MAX_LOADING_WINDOW];
@@ -115,7 +113,7 @@ static int devfreq_gpu_scene_aware_func(struct devfreq *df,
 
 	if (data->window_counter >= data->cur_policy->para[LOADING_WINDOW]) {
 		for (i = 0; i < (data->cur_policy->ntarget_load - 1)
-				&& *freq >= (data->cur_policy->target_load)[i + 1]; i += 2) {/*lint !e679 */
+				&& *freq >= (data->cur_policy->target_load)[i + 1]; i += 2) {
 			;
 		}
 
@@ -137,7 +135,6 @@ check_barrier:
 
 	return 0;
 }
-
 
 #define show_one(object)					\
 static ssize_t show_##object					\
@@ -215,7 +212,6 @@ static ssize_t store_scene(struct device *dev, struct device_attribute *attr, co
 	return count;
 }
 
-
 static ssize_t show_scene(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	struct devfreq *devfreq = to_devfreq(dev);
@@ -259,7 +255,7 @@ static int extract_sub_para(const char *buf,
 	unsigned int i = 0;
 
 	while (i < ntokens) {
-		if (sscanf(cp, "%u", &para[i++]) != 1) /*  [false alarm] */
+		if (sscanf(cp, "%u", &para[i++]) != 1)
 			return -1;
 
 		cp = strpbrk(cp, " :");
@@ -305,7 +301,7 @@ static struct scene_aware_policy *get_policy(const char *buf)
 		cp = cp_sub[i];
 
 		while ((cp = strpbrk(cp + 1, " :"))) {
-			if (i != (ntokens - 1) && cp > cp_sub[i + 1])/*lint !e679 */
+			if (i != (ntokens - 1) && cp > cp_sub[i + 1])
 				break;
 
 			ntokens_sub[i]++;
@@ -403,7 +399,7 @@ static ssize_t show_scene_para(struct device *dev,
 				"  %s:  %d\n",
 				(INDEX == i) ? index_name : policy_para_name[i],
 				policy->para[i]);
-			if (ret >= (PAGE_SIZE - count) || ret < 0) {/*lint !e574 */
+			if (ret >= (PAGE_SIZE - count) || ret < 0) {
 				goto err_ret;
 			}
 			count += ret;
@@ -411,7 +407,7 @@ static ssize_t show_scene_para(struct device *dev,
 
 		ret = snprintf(buf + count, (PAGE_SIZE - count),
 			"  target load:   ");
-		if (ret >= (PAGE_SIZE - count) || ret < 0) {/*lint !e574 */
+		if (ret >= (PAGE_SIZE - count) || ret < 0) {
 			goto err_ret;
 		}
 		count += ret;
@@ -422,14 +418,14 @@ static ssize_t show_scene_para(struct device *dev,
 		for (i = 0; i < policy->ntarget_load - 1; i++) {
 			ret = snprintf(buf + count, (PAGE_SIZE - count),
 				"%d:", policy->target_load[i]);
-			if (ret >= (PAGE_SIZE - count) || ret < 0) {/*lint !e574 */
+			if (ret >= (PAGE_SIZE - count) || ret < 0) {
 				goto err_ret;
 			}
 			count += ret;
 		}
 		ret = snprintf(buf + count, (PAGE_SIZE - count),
 				"%d\n", policy->target_load[i]);
-		if (ret >= (PAGE_SIZE - count) || ret < 0) {/*lint !e574 */
+		if (ret >= (PAGE_SIZE - count) || ret < 0) {
 			goto err_ret;
 		}
 		count += ret;
@@ -501,7 +497,6 @@ static struct attribute *dev_entries[] = {
 	&dev_attr_utilisation.attr,
 	NULL,
 };
-
 
 static struct attribute_group dev_attr_group = {
 	.name	= "gpu_scene_aware",
@@ -588,7 +583,6 @@ static void gpu_scene_aware_exit(struct devfreq *devfreq)
 	kfree(data);
 	devfreq->data = NULL;
 }
-
 
 static int devfreq_gpu_scene_aware_handler(struct devfreq *devfreq,
 				unsigned int event, void *data)
