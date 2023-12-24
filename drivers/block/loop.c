@@ -474,7 +474,6 @@ static void lo_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
 	else if (ret < 0)
 		ret = -EIO;
 
-	rq->errors = ret;
 	blk_mq_complete_request(rq, ret);
 }
 
