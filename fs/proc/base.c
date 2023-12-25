@@ -255,7 +255,7 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
 	 * Inherently racy -- command line shares address space
 	 * with code and data.
 	 */
-	rv = access_remote_vm(mm, arg_end - 1, &c, 1, FOLL_ANON);
+	rv = access_remote_vm(mm, arg_end - 1, &c, 1, 0);
 	if (rv <= 0)
 		goto out_free_page;
 
@@ -273,7 +273,7 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
 			int nr_read;
 
 			_count = min3(count, len, PAGE_SIZE);
-			nr_read = access_remote_vm(mm, p, page, _count, FOLL_ANON);
+			nr_read = access_remote_vm(mm, p, page, _count, 0);
 			if (nr_read < 0)
 				rv = nr_read;
 			if (nr_read <= 0)
@@ -308,7 +308,7 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
 			bool final;
 
 			_count = min3(count, len, PAGE_SIZE);
-			nr_read = access_remote_vm(mm, p, page, _count, FOLL_ANON);
+			nr_read = access_remote_vm(mm, p, page, _count, 0);
 			if (nr_read < 0)
 				rv = nr_read;
 			if (nr_read <= 0)
@@ -357,7 +357,7 @@ skip_argv:
 			bool final;
 
 			_count = min3(count, len, PAGE_SIZE);
-			nr_read = access_remote_vm(mm, p, page, _count, FOLL_ANON);
+			nr_read = access_remote_vm(mm, p, page, _count, 0);
 			if (nr_read < 0)
 				rv = nr_read;
 			if (nr_read <= 0)
@@ -970,7 +970,6 @@ static ssize_t environ_read(struct file *file, char __user *buf,
 	unsigned long src = *ppos;
 	int ret = 0;
 	struct mm_struct *mm = file->private_data;
-	unsigned long env_start, env_end;
 
 	/* Ensure the process spawned far enough to have an environment. */
 	if (!mm || !mm->env_end)
@@ -983,25 +982,20 @@ static ssize_t environ_read(struct file *file, char __user *buf,
 	ret = 0;
 	if (!atomic_inc_not_zero(&mm->mm_users))
 		goto free;
-
-	spin_lock(&mm->arg_lock);
-	env_start = mm->env_start;
-	env_end = mm->env_end;
-	spin_unlock(&mm->arg_lock);
-
 	while (count > 0) {
 		size_t this_len, max_len;
 		int retval;
 
-		if (src >= (env_end - env_start))
+		if (src >= (mm->env_end - mm->env_start))
 			break;
 
-		this_len = env_end - (env_start + src);
+		this_len = mm->env_end - (mm->env_start + src);
 
 		max_len = min_t(size_t, PAGE_SIZE, count);
 		this_len = min(max_len, this_len);
 
-		retval = access_remote_vm(mm, (env_start + src), page, this_len, FOLL_ANON);
+		retval = access_remote_vm(mm, (mm->env_start + src),
+			page, this_len, 0);
 
 		if (retval <= 0) {
 			ret = retval;
