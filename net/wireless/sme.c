@@ -568,7 +568,7 @@ static int cfg80211_sme_connect(struct wireless_dev *wdev,
 			       wdev->conn->params.bssid,
 			       wdev->conn->params.ssid,
 			       wdev->conn->params.ssid_len,
-			       wdev->conn_bss_type,
+			       IEEE80211_BSS_TYPE_ESS,
 			       IEEE80211_PRIVACY(wdev->conn->params.privacy));
 
 	if (prev_bssid) {
