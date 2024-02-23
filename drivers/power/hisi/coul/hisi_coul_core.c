@@ -1,17 +1,11 @@
-
-
 #include "hisi_coul_core.h"
 #include "huawei_platform/inputhub/iom7/inputhub_bridge.h"
 
 #ifdef CONFIG_HUAWEI_PLATFORM
-#include <huawei_platform/log/hw_log.h>
-#define HWLOG_TAG hisi_coul_core
-HWLOG_REGIST();
-#else
-#define hwlog_debug(fmt, args...)do { printk(KERN_DEBUG   "[hisi_coul_core]" fmt, ## args); } while (0)
-#define hwlog_info(fmt, args...) do { printk(KERN_INFO    "[hisi_coul_core]" fmt, ## args); } while (0)
-#define hwlog_warn(fmt, args...) do { printk(KERN_WARNING"[hisi_coul_core]" fmt, ## args); } while (0)
-#define hwlog_err(fmt, args...)  do { printk(KERN_ERR   "[hisi_coul_core]" fmt, ## args); } while (0)
+#define hwlog_debug(fmt, args...) do { } while (0)
+#define hwlog_info(fmt, args...) do { } while (0)
+#define hwlog_warn(fmt, args...) do { } while (0)
+#define hwlog_err(fmt, args...)  do { } while (0)
 #endif
 
 #define LOW_INT_VOL_COUNT 3
