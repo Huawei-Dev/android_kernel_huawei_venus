@@ -122,7 +122,7 @@ out:
  *		find out the same name of dev->name in the server's client_list, and clear the bit, free the dsm_client.
  * NOTE:
  */
-void dsm_unregister_client (struct dsm_client *dsm_client,struct dsm_dev *dev)
+void dsm_unregister_client(struct dsm_client *dsm_client, struct dsm_dev *dev)
 {
 	int i;
 	int conflict;
@@ -776,6 +776,7 @@ out:
 
 EXPORT_SYMBOL(dsm_client_ocuppy);
 EXPORT_SYMBOL(dsm_register_client);
+EXPORT_SYMBOL(dsm_unregister_client);
 EXPORT_SYMBOL(dsm_client_record);
 EXPORT_SYMBOL(dsm_client_notify);
 EXPORT_SYMBOL(dsm_find_client);
