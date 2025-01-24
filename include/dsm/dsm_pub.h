@@ -660,8 +660,8 @@ struct dsm_extern_client{
 };
 
 #ifdef CONFIG_HUAWEI_DSM
-struct dsm_client *dsm_register_client (struct dsm_dev *dev);
-void dsm_unregister_client (struct dsm_client *dsm_client,struct dsm_dev *dev);
+struct dsm_client *dsm_register_client(struct dsm_dev *dev);
+void dsm_unregister_client(struct dsm_client *dsm_client, struct dsm_dev *dev);
 struct dsm_client *dsm_find_client(char *dsm_name);
 int dsm_client_ocuppy(struct dsm_client *client);
 int dsm_client_unocuppy(struct dsm_client *client);
