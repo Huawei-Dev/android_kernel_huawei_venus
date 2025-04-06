@@ -44,7 +44,7 @@ extern int isAsic(void);
   3 Function implement
 *****************************************************************************/
 
-STATIC ssize_t show_wifi_pmdbg(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_wifi_pmdbg(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
    struct wlan_pm_s *pst_wlan_pm = wlan_pm_get_drv();
    oal_int32         ret = 0;
@@ -70,7 +70,7 @@ STATIC ssize_t show_wifi_pmdbg(struct device *dev, struct kobj_attribute *attr, 
    return ret;
 }
 
-STATIC ssize_t store_wifi_pmdbg(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_wifi_pmdbg(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     struct wlan_pm_s *pst_wlan_pm = wlan_pm_get_drv();
     int input = 0;
@@ -124,7 +124,7 @@ STATIC ssize_t store_wifi_pmdbg(struct device *dev, struct kobj_attribute *attr,
     return count;
 }
 
-STATIC ssize_t show_bfgx_pmdbg(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_bfgx_pmdbg(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -142,7 +142,7 @@ STATIC ssize_t show_bfgx_pmdbg(struct device *dev, struct kobj_attribute *attr, 
                         "  9  pm ctrl enable\n  10 pm ctrl disable\n");
 }
 
-STATIC ssize_t store_bfgx_pmdbg(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_bfgx_pmdbg(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     struct pm_drv_data *pm_data = NULL;
     int32  cmd = 0;
@@ -221,7 +221,7 @@ STATIC struct attribute_group pmdbg_attr_grp = {
 };
 
 /* functions called from subsystems */
-STATIC ssize_t show_version(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_version(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     if (NULL == buf)
     {
@@ -232,7 +232,7 @@ STATIC ssize_t show_version(struct device *dev, struct kobj_attribute *attr, int
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "%s\n", g_param_version.param_version);
 }
 
-STATIC ssize_t show_device_board_version(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_device_board_version(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     BOARD_INFO* board_info = NULL;
     if (NULL == buf)
@@ -249,7 +249,7 @@ STATIC ssize_t show_device_board_version(struct device *dev, struct kobj_attribu
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "%s\n", board_info->chip_type);
 }
 
-STATIC ssize_t show_download_mode(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_download_mode(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     BOARD_INFO* board_info = NULL;
     if (NULL == buf)
@@ -277,7 +277,7 @@ STATIC ssize_t show_download_mode(struct device *dev, struct kobj_attribute *att
 }
 
 /* called by octty from hal to decide open or close uart */
-STATIC ssize_t show_install(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_install(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct ps_plat_s *pm_data = NULL;
 
@@ -300,7 +300,7 @@ STATIC ssize_t show_install(struct device *dev, struct kobj_attribute *attr, int
 }
 
 /* read by octty from hal to decide open which uart */
-STATIC ssize_t show_dev_name(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_dev_name(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct ps_plat_s *pm_data = NULL;
 
@@ -323,7 +323,7 @@ STATIC ssize_t show_dev_name(struct device *dev, struct kobj_attribute *attr, in
 }
 
 /* read by octty from hal to decide what baud rate to use */
-STATIC ssize_t show_baud_rate(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_baud_rate(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct ps_plat_s *pm_data = NULL;
 
@@ -346,7 +346,7 @@ STATIC ssize_t show_baud_rate(struct device *dev, struct kobj_attribute *attr, i
 }
 
 /* read by octty from hal to decide whether or not use flow cntrl */
-STATIC ssize_t show_flow_cntrl(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_flow_cntrl(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct ps_plat_s *pm_data = NULL;
 
@@ -369,7 +369,7 @@ STATIC ssize_t show_flow_cntrl(struct device *dev, struct kobj_attribute *attr, 
 }
 
 /* show curr bfgx proto yes or not opened state */
-STATIC ssize_t show_bfgx_active_state(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_bfgx_active_state(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct ps_plat_s *pm_data = NULL;
     uint8 bt_state   = POWER_STATE_SHUTDOWN;
@@ -443,7 +443,7 @@ STATIC ssize_t show_bfgx_active_state(struct device *dev, struct kobj_attribute 
     }
 }
 
-STATIC ssize_t show_ini_file_name(struct device *dev, struct kobj_attribute *attr, char *buf)
+STATIC ssize_t show_ini_file_name(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
     if (NULL == buf)
     {
@@ -454,7 +454,7 @@ STATIC ssize_t show_ini_file_name(struct device *dev, struct kobj_attribute *att
     return snprintf(buf, INI_FILE_PATH_LEN, "%s", g_ini_file_name);
 }
 
-STATIC ssize_t show_country_code(struct device *dev, struct kobj_attribute *attr, char *buf)
+STATIC ssize_t show_country_code(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
     int8 *country_code = NULL;
     int ret;
@@ -488,7 +488,7 @@ STATIC ssize_t show_country_code(struct device *dev, struct kobj_attribute *attr
     }
 }
 
-STATIC ssize_t show_bfgx_exception_count(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_bfgx_exception_count(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct st_exception_info *pst_exception_data = NULL;
 
@@ -509,7 +509,7 @@ STATIC ssize_t show_bfgx_exception_count(struct device *dev, struct kobj_attribu
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "%d\n", pst_exception_data->bfgx_exception_cnt);
 }
 
-STATIC ssize_t show_wifi_exception_count(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_wifi_exception_count(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct st_exception_info *pst_exception_data = NULL;
 
@@ -530,7 +530,7 @@ STATIC ssize_t show_wifi_exception_count(struct device *dev, struct kobj_attribu
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "%d\n", pst_exception_data->wifi_exception_cnt);
 }
 
-STATIC ssize_t show_gnss_lowpower_state(struct device *dev, struct kobj_attribute *attr, char *buf, size_t count)
+STATIC ssize_t show_gnss_lowpower_state(struct kobject *kobj, struct kobj_attribute *attr, char *buf, size_t count)
 {
     struct pm_drv_data *pm_data = pm_get_drvdata();
 
@@ -551,7 +551,7 @@ STATIC ssize_t show_gnss_lowpower_state(struct device *dev, struct kobj_attribut
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "%d\n", atomic_read(&pm_data->gnss_sleep_flag));
 }
 
-STATIC ssize_t gnss_lowpower_state_store(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t gnss_lowpower_state_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int flag = 0;
     struct pm_drv_data *pm_data = NULL;
@@ -606,7 +606,7 @@ STATIC ssize_t gnss_lowpower_state_store(struct device *dev, struct kobj_attribu
     return count;
 }
 
-STATIC ssize_t show_loglevel(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_loglevel(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -619,7 +619,7 @@ STATIC ssize_t show_loglevel(struct device *dev, struct kobj_attribute *attr, in
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "curr loglevel=%d, curr bug_on=%d\nalert:0\nerr:1\nwarning:2\nfunc|succ|info:3\ndebug:4\nbug_on enable:b\nbug_on disable:B\n", g_plat_loglevel, g_bug_on_enable);
 }
 
-STATIC ssize_t store_loglevel(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_loglevel(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32 loglevel = PLAT_LOG_INFO;
 
@@ -662,7 +662,7 @@ STATIC ssize_t store_loglevel(struct device *dev, struct kobj_attribute *attr, c
     return count;
 }
 
-STATIC ssize_t show_ir_mode(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_ir_mode(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     struct pm_drv_data *pm_data = pm_get_drvdata();
     if (NULL == pm_data)
@@ -702,7 +702,7 @@ STATIC ssize_t show_ir_mode(struct device *dev, struct kobj_attribute *attr, int
     return -FAILURE;
 }
 
-STATIC ssize_t store_ir_mode(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_ir_mode(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32 ir_ctrl_level;
     int ret;
@@ -905,7 +905,7 @@ STATIC struct attribute_group bfgx_attr_grp = {
 };
 
 #ifdef PLATFORM_DEBUG_ENABLE
-STATIC ssize_t show_exception_dbg(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_exception_dbg(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -920,7 +920,7 @@ STATIC ssize_t show_exception_dbg(struct device *dev, struct kobj_attribute *att
                         " 2  set beat flat to 0\n");
 }
 
-STATIC ssize_t store_exception_dbg(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_exception_dbg(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32  cmd = 0;
     int32  ret = 0;
@@ -979,7 +979,7 @@ STATIC ssize_t store_exception_dbg(struct device *dev, struct kobj_attribute *at
     return count;
 }
 
-STATIC ssize_t show_uart_rx_dump(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_uart_rx_dump(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -992,7 +992,7 @@ STATIC ssize_t show_uart_rx_dump(struct device *dev, struct kobj_attribute *attr
     return snprintf(buf, SNPRINT_LIMIT_TO_KERNEL, "curr uart dump status =%d\n no:0\n yes:1\n", g_uart_rx_dump);
 }
 
-STATIC ssize_t store_uart_rx_dump(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_uart_rx_dump(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     if (NULL == buf)
     {
@@ -1005,7 +1005,7 @@ STATIC ssize_t store_uart_rx_dump(struct device *dev, struct kobj_attribute *att
     return count;
 }
 
-STATIC ssize_t show_dev_test(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_dev_test(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -1020,7 +1020,7 @@ STATIC ssize_t show_dev_test(struct device *dev, struct kobj_attribute *attr, in
 }
 
 extern int32 uart_loop_test(void);
-STATIC ssize_t store_dev_test(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_dev_test(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32 cmd;
     int32 ret;
@@ -1118,7 +1118,7 @@ STATIC ssize_t store_dev_test(struct device *dev, struct kobj_attribute *attr, c
     return count;
 }
 
-STATIC ssize_t show_wifi_mem_dump(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_wifi_mem_dump(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -1136,7 +1136,7 @@ STATIC ssize_t show_wifi_mem_dump(struct device *dev, struct kobj_attribute *att
                         " 5    equal cmd 1+2+3+4      \n");
 }
 
-STATIC ssize_t store_wifi_mem_dump(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_wifi_mem_dump(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32 cmd;
     int32 ret;
@@ -1181,41 +1181,41 @@ STATIC ssize_t store_wifi_mem_dump(struct device *dev, struct kobj_attribute *at
             break;
         case 2:
             PS_PRINT_INFO("wifi mem dump cmd %d, read wifi public register\n", cmd);
-            plat_wait_last_rotate_finish();
+            //plat_wait_last_rotate_finish();
             if (EXCEPTION_SUCCESS == uart_read_wifi_mem(WIFI_PUB_REG))
             {
                 /*send cmd to oam_hisi to rotate file*/
-                plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
+                //plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
             }
             else
             {
-                plat_rotate_finish_set();
+                //plat_rotate_finish_set();
             };
             break;
         case 3:
             PS_PRINT_INFO("wifi mem dump cmd %d, read wifi priv register\n", cmd);
-            plat_wait_last_rotate_finish();
+//            plat_wait_last_rotate_finish();
             if (EXCEPTION_SUCCESS == uart_read_wifi_mem(WIFI_PRIV_REG))
             {
                 /*send cmd to oam_hisi to rotate file*/
-                plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
+                //plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
             }
             else
             {
-                plat_rotate_finish_set();
+               // plat_rotate_finish_set();
             };
             break;
         case 4:
             PS_PRINT_INFO("wifi mem dump cmd %d, read wifi mem\n", cmd);
-            plat_wait_last_rotate_finish();
+  //          plat_wait_last_rotate_finish();
             if (EXCEPTION_SUCCESS == uart_read_wifi_mem(WIFI_MEM))
             {
                 /*send cmd to oam_hisi to rotate file*/
-                plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
+                //plat_send_rotate_cmd_2_app(CMD_READM_WIFI_UART);
             }
             else
             {
-                plat_rotate_finish_set();
+               // plat_rotate_finish_set();
             };
             break;
         case 5:
@@ -1232,22 +1232,8 @@ STATIC ssize_t store_wifi_mem_dump(struct device *dev, struct kobj_attribute *at
     return count;
 }
 
-/*****************************************************************************
- 函 数 名  : show_bfgx_dump
- 功能描述  : 显示SDIO上报BFGX的reg
- 输入参数  :
- 输出参数  :
- 返 回 值  : void
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2015年12月2日
-    作    者   : c00351912
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-STATIC ssize_t show_bfgx_dump(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_bfgx_dump(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     PS_PRINT_INFO("%s\n", __func__);
 
@@ -1263,23 +1249,8 @@ STATIC ssize_t show_bfgx_dump(struct device *dev, struct kobj_attribute *attr, i
                         " 3    sdio read bcpu mem      \n"
                         " 4    equal cmd 1+2+3         \n");
 }
-/*****************************************************************************
- 函 数 名  : store_bfgx_reg_and_reg_dump
- 功能描述  : SDIO上报BFGX的reg
- 输入参数  :
 
- 输出参数  :
- 返 回 值  : void
- 调用函数  :
- 被调函数  :
-
- 修改历史      :
-  1.日    期   : 2015年12月2日
-    作    者   : c00351912
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-STATIC ssize_t store_bfgx_reg_and_reg_dump(struct device *dev, struct kobj_attribute *attr, const char *buf, size_t count)
+STATIC ssize_t store_bfgx_reg_and_reg_dump(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
     int32 cmd;
     int32 ret;
@@ -1374,7 +1345,7 @@ STATIC struct attribute_group hi110x_debug_attr_grp = {
 #endif
 
 #ifdef HAVE_HISI_NFC
-STATIC ssize_t show_hisi_nfc_conf_name(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_hisi_nfc_conf_name(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     char hisi_nfc_conf_name[BUFF_LEN] = {0};
     int32 ret = 0;
@@ -1396,7 +1367,7 @@ STATIC ssize_t show_hisi_nfc_conf_name(struct device *dev, struct kobj_attribute
     return snprintf(buf, sizeof(hisi_nfc_conf_name), "%s", hisi_nfc_conf_name);
 }
 
-STATIC ssize_t show_brcm_nfc_conf_name(struct device *dev, struct kobj_attribute *attr, int8 *buf)
+STATIC ssize_t show_brcm_nfc_conf_name(struct kobject *kobj, struct kobj_attribute *attr, int8 *buf)
 {
     char brcm_nfc_conf_name[BUFF_LEN] = {0};
     int32 ret = 0;

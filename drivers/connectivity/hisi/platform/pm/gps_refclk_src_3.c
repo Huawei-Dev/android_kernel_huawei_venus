@@ -39,9 +39,7 @@ static struct clk *mdm2gps_clk1 = NULL;
 static struct clk *mdm2gps_clk2 = NULL;
 static HI_GPS_INFO *hi_gps_info_t = NULL;
 
-#if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
 int set_gps_ref_clk_enable_hi110x(bool enable, gps_modem_id_enum modem_id, gps_rat_mode_enum rat_mode);
-#endif
 
 static ssize_t gps_write_proc_nstandby(struct file* filp, const char __user* buffer, size_t len, loff_t* off)
 {
@@ -62,31 +60,23 @@ static ssize_t gps_write_proc_nstandby(struct file* filp, const char __user* buf
 
     if (gps_nstandby == '0')
     {
-    #if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
         printk(KERN_INFO "[GPS] refclk disable.\n");
         set_gps_ref_clk_enable_hi110x(false, 0, 0);
-    #endif
     }
     else if (gps_nstandby == '1')
     {
-    #if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
         printk(KERN_INFO "[GPS] refclk SCPLL0 enable.\n");
         set_gps_ref_clk_enable_hi110x(true, 0, 0);
-    #endif
     }
     else if (gps_nstandby == '2')
     {
-    #if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
         printk(KERN_INFO "[GPS] refclk SCPLL1 enable.\n");
         set_gps_ref_clk_enable_hi110x(true, 0, 4);
-    #endif
     }
     else if (gps_nstandby == '3')
     {
-    #if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
         printk(KERN_INFO "[GPS] refclk SCPLL2 enable.\n");
         set_gps_ref_clk_enable_hi110x(true, 1, 2);
-    #endif
     }
     else
     {
@@ -213,7 +203,7 @@ static int hi_gps_probe(struct platform_device *pdev)
     }
     mdm2gps_clk2 = hi_gps_info->mdmclk2;
 
-    printk(KERN_INFO "[GPS] hi3660 ref clk is finished!\n");
+    printk(KERN_INFO "[GPS] ref clk is finished!\n");
 
     ret = create_gps_proc_file();
     if (ret)
@@ -225,8 +215,9 @@ static int hi_gps_probe(struct platform_device *pdev)
     platform_set_drvdata(pdev, hi_gps_info);
     hi_gps_info_t = hi_gps_info;
 
-#if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
+#ifdef CONFIG_HI110X_GPS_REFCLK_INTERFACE
     register_gps_set_ref_clk_func((void*)set_gps_ref_clk_enable_hi110x);
+    printk(KERN_INFO "[GPS] gps register func pointer succ.\n");
 #endif
     return 0;
 
@@ -262,7 +253,7 @@ static void hi_gps_shutdown(struct platform_device *pdev)
         return;
     }
 
-#if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
+#ifdef CONFIG_HI110X_GPS_REFCLK_INTERFACE
     register_gps_set_ref_clk_func(NULL);
 #endif
 
@@ -321,13 +312,12 @@ void hi_gps_plat_exit(void)
     platform_driver_unregister(&hi_gps_plat_driver);
 }
 
-#if (defined(CONFIG_HISI_GPS_REF_CLK) || defined(CONFIG_CONNECTIVITY_HI110X_HI3660) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN970) || defined(CONFIG_CONNECTIVITY_HI110X_KIRIN660))
 int set_gps_ref_clk_enable_hi110x(bool enable, gps_modem_id_enum modem_id, gps_rat_mode_enum rat_mode)
 {
     int ret = 0;
     struct clk *parent = NULL;
 
-    printk(KERN_INFO "[GPS] hi3660 set_gps_ref_clk_enable(%d,%d,%d) \n", enable, modem_id, rat_mode);
+    printk(KERN_INFO "[GPS] set_gps_ref_clk_enable(%d,%d,%d) \n", enable, modem_id, rat_mode);
     if (IS_ERR_OR_NULL(gps_ref_clk) || IS_ERR_OR_NULL(gps_mux_clk) || IS_ERR_OR_NULL(mdm2gps_clk0) || IS_ERR_OR_NULL(mdm2gps_clk1) || IS_ERR_OR_NULL(mdm2gps_clk2))
     {
         printk(KERN_ERR "[GPS] ERROR: refclk is invalid! \n");
@@ -378,7 +368,6 @@ int set_gps_ref_clk_enable_hi110x(bool enable, gps_modem_id_enum modem_id, gps_r
 
     return 0;
 }
-#endif
 
 MODULE_AUTHOR("DRIVER_AUTHOR");
 MODULE_DESCRIPTION("GPS Hi110X Platfrom driver");

@@ -1,21 +1,4 @@
-/******************************************************************************
 
-                  版权所有 (C), 2001-2011, 华为技术有限公司
-
- ******************************************************************************
-  文 件 名   : wal_linux_ioctl.h
-  版 本 号   : 初稿
-  作    者   : zhangheng
-  生成日期   : 2012年12月10日
-  最近修改   :
-  功能描述   : wal_linux_ioctl.c 的头文件
-  函数列表   :
-  修改历史   :
-  1.日    期   : 2012年12月10日
-    作    者   : zhangheng
-    修改内容   : 创建文件
-
-******************************************************************************/
 
 #ifndef __WAL_LINUX_IOCTL_H__
 #define __WAL_LINUX_IOCTL_H__
@@ -214,11 +197,11 @@ typedef struct
 }wal_ioctl_alg_cfg_stru;
 
 /* 1102 使用wpa_supplicant 下发命令 */
-typedef struct wal_android_wifi_priv_cmd {
+typedef struct wal_wifi_priv_cmd {
     oal_int32    l_total_len;
     oal_int32    l_used_len;
     oal_uint8   *puc_buf;
-}wal_android_wifi_priv_cmd_stru;
+}wal_wifi_priv_cmd_stru;
 
 /*****************************************************************************
   8 UNION定义
@@ -293,7 +276,7 @@ extern oal_int32  wal_cfg_vap_h2d_event(oal_net_device_stru *pst_net_dev);
 #ifdef _PRE_PLAT_FEATURE_CUSTOMIZE
 extern oal_uint32 hwifi_config_init_dts_main(oal_net_device_stru *pst_cfg_net_dev);
 extern oal_int32 wal_set_custom_process_func(custom_cali_func p_fun);
-extern oal_int32 hwifi_config_init_nvram_main(oal_net_device_stru * pst_cfg_net_dev);
+extern oal_uint32 hwifi_config_init_nvram_main(oal_net_device_stru * pst_cfg_net_dev);
 
 extern oal_uint32 wal_custom_cali(oal_void);
 extern oal_void hwifi_config_init_force(oal_void);

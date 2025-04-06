@@ -8,11 +8,13 @@
 *****************************************************************************/
 #include <linux/mutex.h>
 #include <linux/kernel.h>
-#include <linux/wakelock.h>
 
 #include "plat_pm_wlan.h"
 #include "hw_bfg_ps.h"
 #include "board.h"
+#ifdef CONFIG_HUAWEI_DSM
+#include <dsm/dsm_pub.h>
+#endif
 /*****************************************************************************
   2 Define macro
 *****************************************************************************/
@@ -101,7 +103,7 @@ struct pm_drv_data
 	BOARD_INFO						*board;
 
     /*wake lock for bfg,be used to prevent host form suspend*/
-    struct wake_lock                bfg_wake_lock;
+    oal_wakelock_stru       bfg_wake_lock;
 
     /*mutex for sync*/
     struct mutex                    host_mutex;
@@ -182,5 +184,8 @@ extern int32 bfgx_pm_feature_set(void);
 extern int firmware_download_function(uint32 which_cfg);
 extern oal_int32 hi110x_get_wifi_power_stat(oal_void);
 extern int32 device_mem_check(unsigned long long *time);
+#endif
+#ifdef CONFIG_HUAWEI_DSM
+extern void hw_1102_dsm_client_notify(int dsm_id, const char *fmt, ...);
 #endif
 

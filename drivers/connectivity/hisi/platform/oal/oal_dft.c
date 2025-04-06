@@ -146,7 +146,7 @@ oal_void oal_dft_print_all_key_info(oal_void)
 }
 oal_module_symbol(oal_dft_print_all_key_info);
 
-OAL_STATIC ssize_t  oal_dft_get_key_info(struct device *dev, struct device_attribute *attr, char* buf)
+OAL_STATIC ssize_t  oal_dft_get_key_info(struct kobject *dev, struct kobj_attribute *attr, char* buf)
 {
     oal_int32 i;
     oal_int32 ret = 0;
@@ -177,7 +177,8 @@ OAL_STATIC ssize_t  oal_dft_get_key_info(struct device *dev, struct device_attri
     
     return ret;
 }
-OAL_STATIC DEVICE_ATTR(key_info, S_IRUGO, oal_dft_get_key_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_key_info =
+    __ATTR(key_info, S_IRUGO, oal_dft_get_key_info, NULL);
 
 #ifdef HI110X_DRV_VERSION
 OAL_STATIC oal_int32 oal_dft_print_version_info(char* buf)
@@ -187,7 +188,7 @@ OAL_STATIC oal_int32 oal_dft_print_version_info(char* buf)
     return ret;
 }
 
-OAL_STATIC ssize_t  oal_dft_get_version_info(struct device *dev, struct device_attribute *attr, char* buf)
+OAL_STATIC ssize_t  oal_dft_get_version_info(struct kobject *dev, struct kobj_attribute *attr, char* buf)
 {
     oal_int32 ret = 0;
 
@@ -199,7 +200,8 @@ OAL_STATIC ssize_t  oal_dft_get_version_info(struct device *dev, struct device_a
     
     return ret;
 }
-OAL_STATIC DEVICE_ATTR(version, S_IRUGO, oal_dft_get_version_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_version =
+     __ATTR(version, S_IRUGO, oal_dft_get_version_info, NULL);
 #endif
 
 OAL_STATIC struct attribute *dft_sysfs_entries[] = {

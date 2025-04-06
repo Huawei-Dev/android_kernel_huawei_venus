@@ -1,13 +1,26 @@
+
+
 #ifndef __BOARD_H__
 #define __BOARD_H__
 /*****************************************************************************
   1 Include other Head file
 *****************************************************************************/
 
+//#include "hw_bfg_ps.h"
+#include "plat_type.h"
+
 #include <linux/regulator/consumer.h>
 #include <linux/regulator/driver.h>
 #include <linux/regulator/machine.h>
+#ifdef CONFIG_HUAWEI_DSM
+#include <dsm/dsm_pub.h>
+#define DSM_110x_DOWNLOAD_FIRMWARE (909030033)
+#define DSM_110x_HALT              (909030035)
+#define DSM_WIFI_FEMERROR          (909030036)
+#define DSM_SDIO_PROBE_FAIL        (909030006)
 
+extern void hw_1102_dsm_client_notify(int dsm_id, const char *fmt, ...);
+#endif
 /*****************************************************************************
   2 Define macro
 *****************************************************************************/
@@ -23,6 +36,8 @@
 
 #define PINMUX_SET_INIT                      (0)
 #define PINMUX_SET_SUCC                      (1)
+
+#define HI11XX_SUBCHIP_NAME_LEN_MAX          (128)
 
 #define DTS_NODE_HI110X                     "hisilicon,hi1102"
 #define DTS_NODE_HI110X_BFGX                "hisilicon,hisi_bfgx"
@@ -80,48 +95,48 @@
 typedef struct {
 
     /*power*/
-    int power_on_enable;                  /*1102 product*/
-    int bfgn_power_on_enable;             /*1103 product*/
-    int wlan_power_on_enbale;             /*1103 product*/
+    int32 power_on_enable;                  /*1102 product*/
+    int32 bfgn_power_on_enable;             /*1103 product*/
+    int32 wlan_power_on_enbale;             /*1103 product*/
 
     /*wakeup gpio*/
-    int wlan_wakeup_host;
-    int bfgn_wakeup_host;
-    int host_wakeup_wlan;                 /*1103 product*/
+    int32 wlan_wakeup_host;
+    int32 bfgn_wakeup_host;
+    int32 host_wakeup_wlan;                 /*1103 product*/
 
     /*device hisi board verision*/
     const char * chip_type;
 
     /*how to download firmware*/
-    int wlan_download_channel;
-    int bfgn_download_channel;
+    int32 wlan_download_channel;
+    int32 bfgn_download_channel;
 
     bool  have_ir;
-    int irled_power_type;
-    int bfgn_ir_ctrl_gpio;
+    int32 irled_power_type;
+    int32 bfgn_ir_ctrl_gpio;
     struct regulator *bfgn_ir_ctrl_ldo;
 
-    int xldo_pinmux;
+    int32 xldo_pinmux;
 
     /* hi110x irq info */
-    unsigned int wlan_irq;
-    unsigned int bfgn_irq;
+    uint32 wlan_irq;
+    uint32 bfgn_irq;
 
     /* hi110x uart info */
     const char * uart_port;
-    int uart_pclk;
+    int32 uart_pclk;
 
     /* hi110x clk info */
     const char * clk_32k_name;
     struct clk* clk_32k;
 
     /* evb or fpga verison */
-    int is_asic;
+    int32 is_asic;
 
     /* prepare before board power on */
-    int need_power_prepare;
-    int pinmux_set_result;
-    int gpio_xldo_level;
+    int32 need_power_prepare;
+    int32 pinmux_set_result;
+    int32 gpio_xldo_level;
     struct pinctrl *pctrl;
     struct pinctrl_state *pins_normal;
     struct pinctrl_state *pins_idle;
@@ -129,14 +144,14 @@ typedef struct {
 
 typedef struct _device_vesion_board
 {
-    unsigned int index;
+    uint32 index;
     const char name[BOARD_VERSION_LEN + 1];
 }DEVICE_BOARD_VERSION;
 
 typedef struct _download_mode
 {
-    unsigned int index;
-    unsigned char name[DOWNLOAD_CHANNEL_LEN + 1];
+    uint32 index;
+    uint8 name[DOWNLOAD_CHANNEL_LEN + 1];
 }DOWNLOAD_MODE;
 
 enum hisi_device_board
@@ -171,7 +186,7 @@ enum board_irled_power_type
 };
 
 
-extern unsigned int g_device_subchip_type;
+extern uint32 g_device_subchip_type;
 extern DOWNLOAD_MODE device_download_mode_list[MODE_DOWNLOAD_BUTT];
 extern BOARD_INFO g_board_info;
 
@@ -184,16 +199,17 @@ extern BOARD_INFO g_board_info;
   5 EXTERN FUNCTION
 *****************************************************************************/
 extern BOARD_INFO * get_hi110x_board_info(void);
-extern int get_uart_pclk_source(void);
-extern int hi110x_board_init(void);
+extern int32 get_uart_pclk_source(void);
+extern int32 get_device_board_version(void);
+extern int32 hi110x_board_init(void);
 extern void hi110x_board_exit(void);
-extern void board_power_on(unsigned int subsystem);
-extern void board_power_off(unsigned int subsystem);
+extern void board_power_on(uint32 subsystem);
+extern void board_power_off(uint32 subsystem);
 extern int board_get_bwkup_gpio_val(void);
 extern int board_get_wlan_wkup_gpio_val(void);
-extern int check_device_board_name(void);
-extern int get_board_gpio(const char * gpio_node, const char * gpio_prop, int *physical_gpio);
-extern int get_board_dts_node(struct device_node ** np, const char * node_prop);
+extern int32 check_device_board_name(void);
+extern int32 get_board_gpio(const char * gpio_node, const char * gpio_prop, int32 *physical_gpio);
+extern int32 get_board_dts_node(struct device_node ** np, const char * node_prop);
 
 #endif
 
