@@ -1,21 +1,4 @@
-/******************************************************************************
 
-                  版权所有 (C), 2001-2011, 华为技术有限公司
-
- ******************************************************************************
-  文 件 名   : wal_linux_cfg80211.h
-  版 本 号   : 初稿
-  作    者   : zhangheng
-  生成日期   : 2012年11月8日
-  最近修改   :
-  功能描述   : wal_linux_cfg80211.c 的头文件
-  函数列表   :
-  修改历史   :
-  1.日    期   : 2012年11月8日
-    作    者   : zhangheng
-    修改内容   : 创建文件
-
-******************************************************************************/
 
 #ifndef __WAL_LINUX_CFG80211_H__
 #define __WAL_LINUX_CFG80211_H__
@@ -139,7 +122,9 @@ extern "C" {
 #define IEEE80211_FCTL_STYPE            0x00f0
 #define IEEE80211_FTYPE_MGMT            0x0000
 
-#define WAL_GET_STATION_THRESHOLD 1000 /* 固定时间内允许一次抛事件读DMAC RSSI */
+#define WAL_GET_STATION_THRESHOLD         1000 /* 固定时间内允许一次抛事件读DMAC RSSI */
+#define WAL_VOWIFI_GET_STATION_THRESHOLD  200  /*亮屏且vowifi正在使用时*/
+
 
 typedef struct cookie_arry
 {
@@ -154,7 +139,37 @@ typedef struct cookie_arry
     .hw_value       = (_rateid),                                \
     .flags          = (_flags),                                 \
 }
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0))
+#define CHAN2G(_channel, _freq, _flags)  \
+{                       \
+    .band                   = NL80211_BAND_2GHZ,          \
+    .center_freq            = (_freq),                      \
+    .hw_value               = (_channel),                   \
+    .flags                  = (_flags),                     \
+    .max_antenna_gain       = 0,                            \
+    .max_power              = 30,                           \
+}
 
+#define CHAN5G(_channel, _flags) \
+{                                              \
+    .band                   = NL80211_BAND_5GHZ,          \
+    .center_freq            = 5000 + (5 * (_channel)),      \
+    .hw_value               = (_channel),                   \
+    .flags                  = (_flags),                     \
+    .max_antenna_gain       = 0,                            \
+    .max_power              = 30,                           \
+}
+
+#define CHAN4_9G(_channel, _flags) \
+{                                              \
+    .band                   = NL80211_BAND_5GHZ,          \
+    .center_freq            = 4000 + (5 * (_channel)),      \
+    .hw_value               = (_channel),                   \
+    .flags                  = (_flags),                     \
+    .max_antenna_gain       = 0,                            \
+    .max_power              = 30,                           \
+}
+#else
 #define CHAN2G(_channel, _freq, _flags)  \
 {                       \
     .band                   = IEEE80211_BAND_2GHZ,          \
@@ -184,7 +199,7 @@ typedef struct cookie_arry
     .max_antenna_gain       = 0,                            \
     .max_power              = 30,                           \
 }
-
+#endif
 #elif (_PRE_OS_VERSION_WIN32 == _PRE_OS_VERSION)
 
 #define RATETAB_ENT(_rate, _rateid, _flags)     \
@@ -280,26 +295,7 @@ extern oal_uint8 g_uc_vowifi_report_cnt;
   10 函数声明
 *****************************************************************************/
         /* 此处02加载ko时出现，找不到符号的错误，待后续解决 TBD */
-/*****************************************************************************
- 函 数 名  : oal_ieee80211_is_probe_resp
- 功能描述  :
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  :
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2015年1月7日
-    作    者   : x00305155
-    修改内容   : 新生成函数
-  2.日    期   : 2015年1月7日
-    作    者   : xiaoyuren 00305155
-    修改内容   : 判断是否是probe response
-    check if IEEE80211_FTYPE_MGMT && IEEE80211_STYPE_PROBE_RESP
-    @fc: frame control bytes in little-endian byteorder
-
-*****************************************************************************/
 OAL_STATIC OAL_INLINE oal_uint32 oal_ieee80211_is_probe_resp(oal_uint16 fc)
 {
 	return (fc &  (IEEE80211_FCTL_FTYPE | IEEE80211_FCTL_STYPE)) ==
@@ -335,6 +331,13 @@ extern oal_uint32 wal_cfg80211_add_vap(mac_cfg_add_vap_param_stru *pst_add_vap_p
 
 extern oal_void wal_cfg80211_reset_bands(oal_void);
 extern oal_void wal_cfg80211_save_bands(oal_void);
+oal_int32 wal_cfg80211_get_station(oal_wiphy_stru *pst_wiphy,
+                                   oal_net_device_stru *pst_dev,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 16, 0))
+                                   const
+#endif
+                                   oal_uint8 *puc_mac,
+                                   oal_station_info_stru *pst_sta_info);
 
 #ifdef __cplusplus
     #if __cplusplus

@@ -1,22 +1,5 @@
 
-/******************************************************************************
 
-                  版权所有 (C), 2001-2011, 华为技术有限公司
-
- ******************************************************************************
-  文 件 名   : wal_main.c
-  版 本 号   : 初稿
-  作    者   : 康国昌
-  生成日期   : 2012年9月18日
-  最近修改   :
-  功能描述   : WAL模块初始化与卸载
-  函数列表   :
-  修改历史   :
-  1.日    期   : 2012年9月18日
-    作    者   : 康国昌
-    修改内容   : 创建文件
-
-******************************************************************************/
 
 
 #ifdef __cplusplus
@@ -94,21 +77,7 @@ wal_hw_wlan_filter_ops g_st_ip_filter_ops;
   3 函数实现
 *****************************************************************************/
 
-/*****************************************************************************
- 函 数 名  : wal_event_fsm_init
- 功能描述  : 注册事件处理函数
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  : OAL_SUCC
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2012年11月16日
-    作    者   : zhangheng
-    修改内容   : 新生成函数
-
-*****************************************************************************/
 oal_uint32  wal_event_fsm_init(oal_void)
 {
     g_ast_wal_host_crx_table[WAL_HOST_CRX_SUBTYPE_CFG].p_func = wal_config_process_pkt;
@@ -153,21 +122,7 @@ oal_uint32  wal_event_fsm_init(oal_void)
     return OAL_SUCC;
 }
 
-/*****************************************************************************
- 函 数 名  : wal_event_fsm_exit
- 功能描述  : 卸载事件处理函数
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  : OAL_SUCC
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2012年12月28日
-    作    者   : zhangheng
-    修改内容   : 新生成函数
-
-*****************************************************************************/
 oal_uint32  wal_event_fsm_exit(oal_void)
 {
     OAL_IO_PRINT("debug2");
@@ -201,7 +156,7 @@ oal_int32 wal_wakelock_info_print(char* buf, oal_int32 buf_len)
     return ret;
 }
 
-OAL_STATIC ssize_t  wal_get_wakelock_info(struct device *dev, struct device_attribute *attr, char*buf)
+OAL_STATIC ssize_t  wal_get_wakelock_info(struct kobject *dev, struct kobj_attribute *attr, char*buf)
 {
     int ret = 0;
     OAL_BUG_ON(NULL == dev);
@@ -214,7 +169,7 @@ OAL_STATIC ssize_t  wal_get_wakelock_info(struct device *dev, struct device_attr
 }
 
 extern oal_int32 wal_atcmsrv_ioctl_get_rx_pckg(oal_net_device_stru *pst_net_dev, oal_int32 *pl_rx_pckg_succ_num);
-OAL_STATIC ssize_t  wal_get_packet_statistics_wlan0_info(struct device *dev, struct device_attribute *attr, char*buf)
+OAL_STATIC ssize_t  wal_get_packet_statistics_wlan0_info(struct kobject *dev, struct kobj_attribute *attr, char*buf)
 {
     ssize_t                     ret = 0;
     oal_net_device_stru*        pst_net_dev;
@@ -267,8 +222,10 @@ OAL_STATIC ssize_t  wal_get_packet_statistics_wlan0_info(struct device *dev, str
     return ret;
 }
 
-OAL_STATIC DEVICE_ATTR(wakelock, S_IRUGO, wal_get_wakelock_info, NULL);
-OAL_STATIC DEVICE_ATTR(packet_statistics_wlan0, S_IRUGO, wal_get_packet_statistics_wlan0_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_wakelock =
+    __ATTR(wakelock, S_IRUGO, wal_get_wakelock_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_packet_statistics_wlan0 =
+    __ATTR(packet_statistics_wlan0, S_IRUGO, wal_get_packet_statistics_wlan0_info, NULL);
 
 oal_int32 wal_msg_queue_info_print(char* buf, oal_int32 buf_len)
 {
@@ -279,7 +236,7 @@ oal_int32 wal_msg_queue_info_print(char* buf, oal_int32 buf_len)
     return ret;
 }
 
-OAL_STATIC ssize_t  wal_get_msg_queue_info(struct device *dev, struct device_attribute *attr, char*buf)
+OAL_STATIC ssize_t  wal_get_msg_queue_info(struct kobject *dev, struct kobj_attribute *attr, char*buf)
 {
     int ret = 0;
     OAL_BUG_ON(NULL == dev);
@@ -340,7 +297,7 @@ OAL_STATIC ssize_t  wal_get_dev_wifi_info_print(char* buf, oal_int32 buf_len)
 
     return ret;
 }
-OAL_STATIC ssize_t  wal_get_dev_wifi_info(struct device *dev, struct device_attribute *attr, char*buf)
+OAL_STATIC ssize_t  wal_get_dev_wifi_info(struct kobject *dev, struct kobj_attribute *attr, char*buf)
 {
     int ret = 0;
     OAL_BUG_ON(NULL == dev);
@@ -351,9 +308,11 @@ OAL_STATIC ssize_t  wal_get_dev_wifi_info(struct device *dev, struct device_attr
 
     return ret;
 }
-OAL_STATIC DEVICE_ATTR(dev_wifi_info, S_IRUGO, wal_get_dev_wifi_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_dev_wifi_info =
+    __ATTR(dev_wifi_info, S_IRUGO, wal_get_dev_wifi_info, NULL);
 
-OAL_STATIC DEVICE_ATTR(msg_queue, S_IRUGO, wal_get_msg_queue_info, NULL);
+OAL_STATIC struct kobj_attribute dev_attr_msg_queue =
+    __ATTR(msg_queue, S_IRUGO, wal_get_msg_queue_info, NULL);
 
 OAL_STATIC struct attribute *wal_sysfs_entries[] = {
         &dev_attr_wakelock.attr,
@@ -407,21 +366,7 @@ OAL_STATIC oal_int32 wal_sysfs_entry_exit(oal_void)
 }
 #endif
 
-/*****************************************************************************
- 函 数 名  : wal_main_init
- 功能描述  : WAL模块初始化总入口，包含WAL模块内部所有特性的初始化。
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  : 初始化返回值，成功或失败原因
- 调用函数  : 无
- 被调函数  : 无
 
- 修改历史      :
-  1.日    期   : 2012年9月18日
-    作    者   : 康国昌
-    修改内容   : 新生成函数
-
-*****************************************************************************/
 oal_int32  wal_main_init(oal_void)
 {
     oal_uint32           ul_ret;
@@ -510,21 +455,7 @@ oal_int32  wal_main_init(oal_void)
     return OAL_SUCC;
 }
 
-/*****************************************************************************
- 函 数 名  : wal_destroy_all_vap
- 功能描述  : 卸载前删除所有vap
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  :
- 调用函数  :
- 被调函数  :
 
- 修改历史      :
-  1.日    期   : 2014年4月28日
-    作    者   : t00231215
-    修改内容   : 新生成函数
-
-*****************************************************************************/
 oal_void  wal_destroy_all_vap(oal_void)
 {
 #if (_PRE_TEST_MODE_UT != _PRE_TEST_MODE)
@@ -534,7 +465,6 @@ oal_void  wal_destroy_all_vap(oal_void)
     oal_wireless_dev_stru  *pst_wdev;
     oal_int8                ac_param[10] = {0};
     OAL_IO_PRINT("wal_destroy_all_vap start");
-    /* 删除业务vap，双芯片id从2开始，增加编译宏表示板级业务vap起始id 后续业务vap的处理，采用此宏 DTS2015062404971  */
     for (uc_vap_id = WLAN_SERVICE_VAP_START_ID_PER_BOARD; uc_vap_id < WLAN_VAP_SUPPORT_MAX_NUM_LIMIT; uc_vap_id++)
     {
         pst_net_dev = hmac_vap_get_net_device(uc_vap_id);
@@ -577,21 +507,7 @@ oal_void  wal_destroy_all_vap(oal_void)
     return;
 }
 
-/*****************************************************************************
- 函 数 名  : wal_main_exit
- 功能描述  : WAL模块卸载
- 输入参数  : 无
- 输出参数  : 无
- 返 回 值  : 模块卸载返回值，成功或失败原因
- 调用函数  : 无
- 被调函数  : 无
 
- 修改历史      :
-  1.日    期   : 2012年9月18日
-    作    者   : 康国昌
-    修改内容   : 新生成函数
-
-*****************************************************************************/
 oal_void  wal_main_exit(oal_void)
 {
 #ifdef _PRE_PLAT_FEATURE_CUSTOMIZE

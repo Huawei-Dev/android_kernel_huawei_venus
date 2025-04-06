@@ -9,7 +9,6 @@
 #if (_PRE_OS_VERSION_LINUX == _PRE_OS_VERSION)
 #include <linux/mutex.h>
 #include <linux/kernel.h>
-#include <linux/wakelock.h>
 
 #include <linux/mmc/host.h>
 #include <linux/mmc/sdio_func.h>
@@ -19,8 +18,6 @@
 #endif
 
 #include "oal_ext_if.h"
-
-
 
 #define HOST_WAIT_BOTTOM_INIT_TIMEOUT   (20000)
 #define WLAN_WAKUP_MSG_WAIT_TIMEOUT     (100)
@@ -33,6 +30,9 @@
 #define WLAN_SLEEP_LONG_CHECK_CNT       (8)     /*入网阶段,延长至400ms*/
 //#define DEFAULT_WDG_TIMEOUT             (200)
 //#define LONG_WDG_TIMETOUT               (400)
+
+#define WLAN_WAKELOCK_HOLD_TIME         (500)   /*hold wakelock 500ms*/
+
 #define WLAN_SDIO_MSG_RETRY_NUM         (3)
 #define WLAN_WAKEUP_FAIL_MAX_TIMES      (1)  /* 连续多少次wakeup失败，可进入DFR流程 */
 
@@ -57,6 +57,9 @@ enum WLAN_PM_SLEEP_STAGE
     SLEEP_CMD_SND       = 4,  //允许睡眠reg设置完成
 };
 
+#ifdef CONFIG_HUAWEI_DSM
+#define DSM_DEV_BUFF_SIZE       1024
+#endif
 /*****************************************************************************
   3 STRUCT DEFINE
 *****************************************************************************/
@@ -91,6 +94,9 @@ struct wlan_pm_s
     oal_work_stru           st_ram_reg_test_work;  //ram_reg_test work
 
     struct timer_list       st_watchdog_timer;   //sleep watch dog
+    struct timer_list       st_deepsleep_delay_timer;
+    oal_wakelock_stru       st_deepsleep_wakelock;
+
     oal_uint32              ul_packet_cnt;       //睡眠周期内统计的packet个数
     oal_uint32              ul_wdg_timeout_cnt;  //timeout check cnt
     oal_uint32              ul_wdg_timeout_curr_cnt;  //timeout check current cnt
@@ -177,6 +183,10 @@ extern oal_int32 wlan_device_mem_check(void);
 extern oal_int32 wlan_device_mem_check_result(unsigned long long *time);
 extern oal_void wlan_device_mem_check_work(oal_work_stru *pst_worker);
 
+#endif
+#ifdef CONFIG_HUAWEI_DSM
+extern void hw_1102_register_wifi_dsm_client(void);
+extern void hw_1102_unregister_wifi_dsm_client(void);
 #endif
 
 #endif
