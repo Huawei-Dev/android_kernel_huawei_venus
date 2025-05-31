@@ -239,7 +239,7 @@ int hisp_get_dt_data(struct platform_device *pdev, hisp_dt_data_t *dt)
 	int ret = 0;
 	struct device *dev = NULL;
 	struct device_node *of_node = NULL;
-	int is_fpga = 0;
+	unsigned int is_fpga = 0;
 	const char *clk_name = NULL;
 	if (NULL == pdev || NULL == dt) {
 		cam_err("%s: pdev or dt is NULL.", __func__);

@@ -260,21 +260,9 @@ s_subdev_core_ops_hwsensor =
     .s_power = hwsensor_power,
 };
 
-static int
-hwsensor_v4l2_enum_fmt(
-        struct v4l2_subdev* sd,
-        unsigned int index,
-        enum v4l2_mbus_pixelcode* code)
-{
-    return 0;
-}
-
 static struct v4l2_subdev_video_ops
 s_subdev_video_ops_hwsensor =
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 1, 0))
-    .enum_mbus_fmt = hwsensor_v4l2_enum_fmt,
-#endif
 };
 
 static struct v4l2_subdev_ops
